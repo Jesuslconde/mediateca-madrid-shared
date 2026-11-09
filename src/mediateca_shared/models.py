@@ -86,7 +86,6 @@ class Edicion(Base):
     enlaces: Mapped[list[Enlace]] = relationship(
         back_populates="edicion", cascade="all, delete-orphan"
     )
-    snapshots: Mapped[list[Snapshot]] = relationship(back_populates="edicion")
 
 
 class Biblioteca(Base):
@@ -198,24 +197,6 @@ class Enlace(Base):
     etiqueta: Mapped[str | None] = mapped_column(String(250))
 
     edicion: Mapped[Edicion] = relationship(back_populates="enlaces")
-
-
-class Snapshot(Base):
-    __tablename__ = "snapshots"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    edicion_id: Mapped[int | None] = mapped_column(
-        ForeignKey("ediciones.id", ondelete="SET NULL"), index=True
-    )
-    titn: Mapped[str] = mapped_column(String(32), index=True)
-    url: Mapped[str] = mapped_column(Text)
-    path: Mapped[str] = mapped_column(Text)
-    sha256: Mapped[str] = mapped_column(String(64), index=True)
-    fetched_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
-
-    edicion: Mapped[Edicion | None] = relationship(back_populates="snapshots")
 
 
 class HarvestJob(Base):
